@@ -1,5 +1,6 @@
 import VueRouter from 'vue-router';
-import Home from './components/home/Home.vue';
+import Home from './components/home/Home';
+import Browse from './components/browse/Browse';
 
 export default new VueRouter({
   routes: [
@@ -7,6 +8,11 @@ export default new VueRouter({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/browse',
+      name: 'Browse',
+      component: Browse
     }
   ]
 })

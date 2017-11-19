@@ -1,7 +1,6 @@
 <template>
 <div class="wrap">
 	<section class="top-section">
-	  <app-nav></app-nav>
       <div class="bgafter"></div>
 		<div class="container">
 			<div class="jumbotron">
@@ -15,7 +14,7 @@
 							business information.
 						</p>
 						<p>
-							<a href="/#browse" class="btn btn-primary btn-lg">Browse Now</a>
+							<router-link to="/browse" class="btn btn-primary btn-lg" >Browse Now</router-link>
 						</p>
 					</div>
 					<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
@@ -34,7 +33,6 @@
 						<span class="glyphicon glyphicon-check"></span>
 					</div>
 					<h3 class="text-center">
-						Built with Bootstrap 3
 					</h3>
 					<p>
 						Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.
@@ -45,7 +43,6 @@
 						<span class="glyphicon glyphicon-check"></span>
 					</div>
 					<h3 class="text-center">
-						Fully Responsive
 					</h3>
 					<p>
 						Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.
@@ -56,7 +53,6 @@
 						<span class="glyphicon glyphicon-check"></span>
 					</div>
 					<h3 class="text-center">
-						Totally Free License
 					</h3>
 					<p>
 						Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.
@@ -75,13 +71,8 @@
 
 <script>
 
-import Nav from '../../components/base/Nav';
-
 export default {
   name: 'Home',
-  components: {
-  	'app-nav' : Nav
-  }
 }
 
 
