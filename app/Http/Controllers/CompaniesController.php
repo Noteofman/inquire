@@ -7,7 +7,6 @@ use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Inquire\Filter\Builder;
 
 class CompaniesController extends Controller
 {
@@ -18,11 +17,11 @@ class CompaniesController extends Controller
      */
     public function categories()
     {
-        $users = DB::table('company_data')
+        $companies = DB::table('company_data')
             ->select(DB::raw('count(title) count, business_category category'))
             ->groupBy('business_category')
             ->get();
-        return $users;
+        return $companies;
     }
 
     /**
@@ -33,7 +32,18 @@ class CompaniesController extends Controller
     public function filter(Request $request)
     {
         try {
-            return App::make('filter.builder')->filter($request);
+            return App::make('company.filter')->filter($request);
+        } catch (InvalidArgumentException $e) {
+            return array(
+                'error' => 'A problem occured when trying to get those companies.'
+            );
+        }
+    }
+    
+    public function getCompany($id)
+    {   
+        try {
+            return App::make('company.company')->get($id);
         } catch (InvalidArgumentException $e) {
             return array(
                 'error' => 'A problem occured when trying to get those companies.'

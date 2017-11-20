@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Inquire\Filter;
+namespace App\Inquire\Company;
 
 use Exception;
 use InvalidArgumentException;
@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 /**
  * Build a company filter from a request.
  */
-class Builder
+class Filter
 {
     /**
      * Allowed filter groups.
@@ -55,10 +55,12 @@ class Builder
      * @param string $type  Group to filter by.
      * @param string $value Value to filter on.
      *
-     * @return Obj
+     * @return Objz
      */
     protected function buildQuery($type, $value)
     {
-        return DB::table($this->companyTable)->where($this->filterGroups[$type], '=', $value);
+        return DB::table($this->companyTable)
+            ->select(['id', 'business_sub_category', 'telephone', 'latitude', 'longitude', 'title', 'location'])
+            ->where($this->filterGroups[$type], '=', $value);
     }
 }

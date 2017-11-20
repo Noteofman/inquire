@@ -14,7 +14,7 @@
     </div>
     <div class="col-md-4 col-md-offset-1">
         <div id='arrow-area'>
-           <img id="arrow" width='300px' src="/img/arrow.svg">
+           <img id="arrow" width='230px' src="/img/arrow.svg">
            <h3> Select a category and see whats about!</h3>
         </div>
     </div> 
@@ -36,7 +36,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 
 a:hover {
  cursor:pointer;
@@ -45,6 +45,12 @@ a:hover {
 @media screen and (min-width: 500px) {
     .category {
         min-width: 500px;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    #arrow-area {
+        display:none;
     }
 }
 

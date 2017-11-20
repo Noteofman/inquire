@@ -13,9 +13,9 @@
 		</div>
 		
 		<div class="collapse navbar-collapse navbar-ex1-collapse">
-			<form class="navbar-form navbar-left ng-pristine ng-valid" role="search">
+			<form id='search-container' class="navbar-form navbar-left ng-pristine ng-valid" role="search">
 				<div class="form-group">
-					<input type="text" class="form-control">
+					<input id='search-text' placeholder='Business name' type="text" class="form-control">
 				</div> <button type="submit" class="btn btn-default">Search</button>
 			</form>
 		</div>
@@ -33,8 +33,19 @@ export default {
 </script>
 
 <style type="text/css">
-	#nav-logo {
-		width:60px;
-		padding:5px;
+
+@media screen and (min-width: 1000px) {
+	#search-container {
+		width:700px;
 	}
+
+	#search-text {
+		width:500px;
+	}
+}
+#nav-logo {
+	width:60px;
+	padding:5px;
+}
+
 </style>

@@ -15,7 +15,9 @@
                 <sidelist v-if="postCategory" @clicked='onCategoryClick' header='CATEGORY' :list-items='postCategory' > </sidelist>
               </div>
               <div id='company-list'>
-                <company-list header='BUSINESSES' :list-items='companies' v-if="showCompanyList"> </company-list>
+                <transition name="fade">
+                  <company-list @clicked='onCompanyClick' header='BUSINESSES' :subcategory='selectedCat' :list-items='companies' v-if="showCompanyList"> </company-list>
+                </transition>
               </div>
         </div>
     </div>
@@ -27,6 +29,7 @@
 import Titlebar from '../base/Titlebar';
 import SideList from './SideList';
 import CompanyList from './CompanyList';
+import router from '../../routes';
 
 export default {
     name: 'browse',
@@ -77,6 +80,12 @@ export default {
             this.loading =false;
             console.log(error);
           });
+      },
+
+      onCompanyClick(event) {
+        var el = $(event.target);
+        var id = el.attr('data-id');
+        router.push('/browse/' + id);
       }
     },
 

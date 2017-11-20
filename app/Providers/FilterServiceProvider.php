@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\DB;
-use App\Inquire\Filter\Builder;
+use App\Inquire\Company\Filter;
+use App\Inquire\Company\Company;
 
 class FilterServiceProvider extends ServiceProvider
 {
@@ -25,8 +26,12 @@ class FilterServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('filter.builder', function ($app) {
-            return new Builder();
+        $this->app->bind('company.filter', function ($app) {
+            return new Filter();
+        });
+
+        $this->app->bind('company.company', function ($app) {
+            return new Company();
         });
     }
 }

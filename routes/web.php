@@ -22,3 +22,5 @@ Route::get('/api/companies', function () {
 Route::get('/api/companies/categories', 'CompaniesController@categories');
 
 Route::get('/api/companies/filter', 'CompaniesController@filter');
+
+Route::get('/api/companies/{id}', 'CompaniesController@getCompany');

@@ -3,10 +3,19 @@
 <div class="col">
     <!-- Category -->
     <div class="single companies">
-        <h3 class="side-title">{{header}}</h3>
+        <h3 class="side-title">{{header}} - {{subcategory}}</h3>
         <ul class="list-unstyled">
             <li v-for="item in listItems">
-                <a v-on:click='onCompanyClick' :data-category="item.category" v-if title="">{{item.title}}</a>
+                <div class="container">
+                  <div class="panel panel-default">
+                    <div class="panel-heading text-left"><a :data-id="item.id" v-on:click='onCompanyClick' >{{item.title}}</a></div>
+                    <div class="panel-body">
+                        <div class="pull-left"><i>{{item.business_sub_category}}</i></div> <br>
+                        <div class="pull-left">{{item.location}}</div>
+                        <div class="pull-right"><span class="fa fa-phone"></span> <strong>{{item.telephone}}</strong></div>
+                    </div>
+                  </div>
+                </div>
             </li>   
         </ul>
    </div>
@@ -17,7 +26,7 @@
 <script>
     
 export default {
-    props: ['header', 'listItems'],
+    props: ['header', 'listItems', 'subcategory'],
 
     methods: {
         onCompanyClick (event) {
@@ -51,7 +60,6 @@ a:hover {
     margin-bottom: 10px;
     padding: 0;
     font-size: 20px;
-    color: #333;
     text-transform: uppercase;
 }
 .single h3.side-title:after 
@@ -67,10 +75,8 @@ a:hover {
 .single ul {
     margin-bottom: 0; }
     .single li a {
-    color: #666;
     font-size: 14px;
     text-transform: uppercase;
-    border-bottom: 1px solid #f0f0f0;
     line-height: 40px;
     display: block;
     text-decoration: none; }
