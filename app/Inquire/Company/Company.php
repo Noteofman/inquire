@@ -21,17 +21,22 @@ class Company
     public function get($id)
     {
         $result = DB::table('company_data')
-            ->where('id', '=', $id)
+            ->select('company_data.*', 'cats.name')
+            ->leftJoin('company_categories as cats', 'company_data.company_category_id', '=', 'cats.id')
+            ->where('company_data.id', '=', $id)
             ->get()->toArray();
+
         $company = (array) reset($result);
         if (!$company) {
             throw new Exception('Could not get company by id.');
         }
-        if (!$company['longitude'] || !$company['latitude']) {
+        if ((!$company['longitude'] || !$company['latitude']) && $company['location']) {
             $coords = $this->setCoordinates($company);
             $company['longitude'] = $coords['lng'];
             $company['latitude'] = $coords['lat'];
         }
+        $company['latitude'] = floatval($company['latitude']);
+        $company['longitude'] = floatval($company['longitude']);
         return $company;
 
     }

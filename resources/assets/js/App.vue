@@ -20,6 +20,7 @@ export default {
 </script>
 
 <style>
+
 @import '/css/app.css';
 
 #app {

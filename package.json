@@ -19,7 +19,12 @@
         "vue": "^2.1.10"
     },
     "dependencies": {
+        "@google/maps": "^0.4.5",
         "font-awesome": "^4.7.0",
-        "vue-router": "^3.0.1"
+        "readmore-js": "^2.1.0",
+        "vue-infinite-scroll": "^2.0.2",
+        "vue-read-more": "^1.1.0",
+        "vue-router": "^3.0.1",
+        "vue2-google-maps": "^0.8.4"
     }
 }

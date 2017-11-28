@@ -15,11 +15,15 @@ Route::get('/', function () {
     return view('index');
 });
 
+Route::get('/api/config', 'ConfigController@getAll');
+
 Route::get('/api/companies', function () {
     return view('index');
 });
 
 Route::get('/api/companies/categories', 'CompaniesController@categories');
+
+Route::get('/api/companies/categories/{category}', 'CompaniesController@categoryDetails');
 
 Route::get('/api/companies/filter', 'CompaniesController@filter');
 

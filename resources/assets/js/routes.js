@@ -1,6 +1,7 @@
 import VueRouter from 'vue-router';
 import Home from './components/home/Home';
 import Browse from './components/browse/Browse';
+import CompanyList from './components/browse/CompanyList';
 import Company from './components/company/Company';
 
 export default new VueRouter({
@@ -17,6 +18,12 @@ export default new VueRouter({
     },
     {
       path: '/browse/:id',
+      name: 'list',
+      component: CompanyList,
+      props: true
+    },
+    {
+      path: '/company/:id',
       name: 'company',
       component: Company,
       props: true

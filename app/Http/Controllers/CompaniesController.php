@@ -18,8 +18,19 @@ class CompaniesController extends Controller
     public function categories()
     {
         $companies = DB::table('company_data')
-            ->select(DB::raw('count(title) count, business_category category'))
-            ->groupBy('business_category')
+            ->join('company_categories', 'company_data.company_category_id', '=', 'company_categories.id')
+            ->select(DB::raw('count(title) count, company_categories.name category, company_categories.id'))
+            ->groupBy('company_categories.id')
+            ->get();
+        return $companies;
+    }
+
+    public function categoryDetails($id)
+    {
+        $companies = DB::table('company_data')
+            ->select('business_sub_category')
+            ->where('company_category_id', '=', $id)
+            ->groupBy('business_sub_category')
             ->get();
         return $companies;
     }

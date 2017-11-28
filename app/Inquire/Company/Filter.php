@@ -7,19 +7,26 @@ use InvalidArgumentException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
+use App\Inquire\GeoLocation\Distance;
 
 /**
  * Build a company filter from a request.
  */
 class Filter
 {
+
+    public function __construct()
+    {
+        $this->distance = new Distance;
+    }
+
     /**
      * Allowed filter groups.
      * 
      * @var array
      */
     protected $filterGroups = array(
-        'category' => 'business_category'
+        'category_id' => 'company_category_id'
     );
 
     /**
@@ -40,13 +47,31 @@ class Filter
     {
         $type = $request->query('type');
         $value = $request->query('value');
+        $clientLng = $request->query('longitude');
+        $clientLat = $request->query('latitude');
         if (!$type || !$value) {
             throw new InvalidArgumentException('No type or value given for filter.');
         }
-        if (!$this->filterGroups[$type]) {
+        if (!isset($this->filterGroups[$type])) {
             throw new InvalidArgumentException($type . ' is not in the allowed filter groups');
         }
-        return $this->buildQuery($type, $value)->get();
+        $result = $this->buildQuery($type, $value)->get()->toArray();
+        foreach ($result as $company) {
+            $company->distance = null;
+            if ($company->longitude && $company->latitude) {
+                $distance = $this->distance->get(
+                    array(
+                        'lon1' => $company->longitude,
+                        'lat1' => $company->latitude,
+                        'lon2' => $clientLng,
+                        'lat2' => $clientLat,
+                        'unit' => 'M',
+                    )
+                );
+                $company->distance = round($distance);
+            }
+        }
+        return $result;
     }
 
     /**

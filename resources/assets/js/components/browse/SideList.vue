@@ -7,7 +7,7 @@
             <h3 class="side-title">{{header}}</h3>
             <ul class="list-unstyled">
                 <li v-for="item in listItems">
-                    <a v-on:click='onCategoryClick' :data-category="item.category" v-if title="">{{item.category}} <span class="pull-right">{{item.count}}</span></a>
+                    <router-link tag="a" :to="{path: '/browse/' + item.id, query: {category: item.category} }">{{item.category}}<span class="pull-right">{{item.count}}</span></router-link>
                 </li>   
             </ul>
        </div>
