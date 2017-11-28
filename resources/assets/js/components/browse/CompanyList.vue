@@ -20,7 +20,7 @@
               <div class="form-group-filter">
                 <label for="type1" class="control-label">Type</label>
                 <select v-model="selected_subcat" class="form-control" name="" id="type1">
-                  <option value="" disabled selected>Select a subcategory</option>
+                  <option value=""></option>
                   <option :value='cat.business_sub_category' v-for='cat in subcategories' value="">{{cat.business_sub_category}}</option>
                 </select>
               </div>
@@ -31,7 +31,7 @@
         </div>
     </div>
     <div class="single companies" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10" infinite-scroll-immediate-check='false'>
-        <h3 class="side-title">BUSINESSES - {{category}}</h3>
+        <h3 class="side-title"><strong>BUSINESSES - {{category}}</strong></h3>
         <ul class="list-unstyled">
             <li v-for="item in listItems">
                 <div class="container">
@@ -100,20 +100,18 @@ export default {
         },
 
         onFilter() {
-            console.log(this.selected_distance);
-            var params = {
-                subcat: this.selected_subcat,
-                distance: this.selected_distance,
-                category_id: this.category
-            }
-            axios.get('/api/companies/filter',
-            {
-              params: params
-            }
-            )
-            .then(response => {
-              this.listItems = response.data;
-            })
+            this.buildFilter((params) => {
+              params.subcat = this.selected_subcat,
+              params.distance = this.selected_distance,
+              axios.get('/api/companies/filter',
+              {
+                params: params
+              }
+              )
+              .then(response => {
+                this.listItems = response.data;
+              })
+            });
         }
     },
 
@@ -133,16 +131,35 @@ export default {
             });
         });
 
-        axios.get('/api/companies/categories/' + this.id)
-            .then(response => {
-                this.subcategories = response.data;
-            })
+    axios.get('/api/companies/categories/' + this.id)
+        .then(response => {
+            this.subcategories = response.data;
+        })
     }
 }
 
 </script>
 
 <style scoped>
+
+#search-filter button {
+  width: 75px;
+  margin-bottom: 3px;
+}
+
+li {
+  height: 130px;
+}
+
+select:required:invalid {
+  color: gray;
+}
+option[value=""][disabled] {
+  display: none;
+}
+option {
+  color: black;
+}
 
 a:hover {
  cursor:pointer;
@@ -176,7 +193,6 @@ a:hover {
 
 .single {
     padding: 30px 15px;
-    margin-top: 40px;
     background: #fcfcfc;
     border: 1px solid #f0f0f0; 
 }

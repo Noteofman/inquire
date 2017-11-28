@@ -44,7 +44,7 @@ class CompaniesController extends Controller
     {
         try {
             return App::make('company.filter')->filter($request);
-        } catch (InvalidArgumentException $e) {
+        } catch (sInvalidArgumentException $e) {
             return array(
                 'error' => 'A problem occured when trying to get those companies.'
             );

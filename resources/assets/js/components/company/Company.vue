@@ -9,12 +9,8 @@
                     <div class="col-xs-12 col-sm-8">
                         <h2>{{info.title}}</h2>
                         <read-more id='body' more-str="Read more" :text="info.body" link="#" less-str="Read less" :max-chars="400"></read-more>
-                        <p><strong>Hobbies: </strong> Read, out with friends, listen to music, draw and learn new things. </p>
-                        <p><strong>Skills: </strong>
-                            <span class="tags">html5</span> 
-                            <span class="tags">css3</span>
-                            <span class="tags">jquery</span>
-                            <span class="tags">bootstrap3</span>
+                        <p><strong>Keywords: </strong>
+                            <span class='tags' v-for='word in keywords'> {{word}}</span>
                         </p>
                     </div>             
                     <div class="col-xs-12 col-sm-4 text-center">
@@ -37,25 +33,6 @@
                                     </div>
                                 </div>
                               </div>
-                            <figcaption class="ratings">
-                                <p>Ratings
-                                <a href="#">
-                                    <span class="fa fa-star"></span>
-                                </a>
-                                <a href="#">
-                                    <span class="fa fa-star"></span>
-                                </a>
-                                <a href="#">
-                                    <span class="fa fa-star"></span>
-                                </a>
-                                <a href="#">
-                                    <span class="fa fa-star"></span>
-                                </a>
-                                <a href="#">
-                                     <span class="fa fa-star-o"></span>
-                                </a> 
-                                </p>
-                            </figcaption>
                         </figure>
                     </div>
                 </div>            
@@ -93,13 +70,15 @@
 <script>
 
 import 'readmore-js';
+import Keywords from 'keyword-extractor';
 
 export default {
     props: ['id'],
 
     data() {
         return {
-            info: null
+            info: null,
+            keywords: null
         }
     },
 
@@ -108,6 +87,13 @@ export default {
         .then(response => {
           this.loading = false;
           this.info = response.data;
+          var keywords = Keywords.extract(this.info.body, {
+            language:"english",
+            remove_digits: true,
+            return_changed_case:true,
+            remove_duplicates: true,
+          });
+          this.keywords = keywords.slice(0,8);
         })
         .catch(error => {
           this.loading = false;
@@ -135,6 +121,12 @@ export default {
 
 #body {
     text-align: left;
+}
+
+.tags {
+  margin:3px;
+  padding: 1px 6px !important;
+  background: #304843 !important;
 }
 
 .vue-map-container {
@@ -170,7 +162,7 @@ body
     }
 .profile 
 {
-    min-height: 355px;
+    min-height: 290px;
     display: inline-block;
     }
 figcaption.ratings

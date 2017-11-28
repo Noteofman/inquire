@@ -15,6 +15,9 @@ use App\Inquire\GeoLocation\Distance;
 class Filter
 {
 
+    /**
+     * Setup utils.
+     */
     public function __construct()
     {
         $this->distance = new Distance;
@@ -26,7 +29,26 @@ class Filter
      * @var array
      */
     protected $filterGroups = array(
-        'category_id' => 'company_category_id'
+        'category_id' => array(
+            'id' => 'company_category_id',
+            'group' => 'db'
+        ),
+        'subcat' => array(
+            'id' => 'business_sub_category',
+            'group' => 'db'
+        ),
+        'longitude' => array(
+            'id' => 'longitude',
+            'group' => 'geo'
+        ),
+        'latitude' => array(
+            'id' => 'latitude',
+            'group' => 'geo'
+        ),
+        'distance' => array(
+            'id' => 'latitude',
+            'group' => 'geo'
+        )
     );
 
     /**
@@ -37,55 +59,106 @@ class Filter
     protected $companyTable = 'company_data';
 
     /**
-     * Filter company details on certain parameters.
+     * Filter company list on certain parameters.
      * 
      * @param Request $request Request Obj.
      *
-     * @return Collection
+     * @return array
      */
     public function filter(Request $request)
     {
-        $type = $request->query('type');
-        $value = $request->query('value');
-        $clientLng = $request->query('longitude');
-        $clientLat = $request->query('latitude');
-        if (!$type || !$value) {
-            throw new InvalidArgumentException('No type or value given for filter.');
+        $filters = $request->query();
+        $parsed = $this->parseFilters($filters);
+        $result = $this->buildQuery($parsed['db'])->get()->toArray();
+        if (isset($filters['longitude']) && isset($filters['latitude'])) {
+            $result = $this->getDistance($result, $filters);
         }
-        if (!isset($this->filterGroups[$type])) {
-            throw new InvalidArgumentException($type . ' is not in the allowed filter groups');
-        }
-        $result = $this->buildQuery($type, $value)->get()->toArray();
-        foreach ($result as $company) {
+        return $result;
+    }
+
+    /**
+     * Get the distance using client and company coords.
+     * 
+     * @param array  $result    Query resultset
+     * @param array  $filters   Query filters.
+     * 
+     * @return array
+     */
+    protected function getDistance(array $result, array $filters)
+    {
+        foreach ($result as $key => $company) {
             $company->distance = null;
             if ($company->longitude && $company->latitude) {
                 $distance = $this->distance->get(
                     array(
                         'lon1' => $company->longitude,
                         'lat1' => $company->latitude,
-                        'lon2' => $clientLng,
-                        'lat2' => $clientLat,
+                        'lon2' => $filters['longitude'],
+                        'lat2' => $filters['latitude'],
                         'unit' => 'M',
                     )
                 );
                 $company->distance = round($distance);
+                if (isset($filters['distance'])) {
+                    if ($company->distance > $filters['distance']) {
+                        unset($result[$key]);
+                    }
+                }
             }
         }
         return $result;
+
+    }
+
+    /**
+     * Confirm if the given filters are actually valid
+     * and sort into database and location based filters.
+     * 
+     * @param array $filters Query params.
+     * 
+     * @return bool
+     */
+    protected function parseFilters(array $filters)
+    {
+        $parsed = array(
+            'db' => null,
+            'geo' => null
+        );
+        if (!$filters) {
+            return true;
+        }
+        foreach ($filters as $key => $val) {
+            if (!isset($this->filterGroups[$key])) {
+                throw new InvalidArgumentException('Invalid filter arguments provided.');
+            }
+            if (!$val) {
+                continue;
+            }
+            $group = $this->filterGroups[$key]['group'];
+            if ($this->filterGroups[$key]['group']) {
+                $parsed[$group][] = array(
+                    'name' => $this->filterGroups[$key]['id'],
+                    'val' => $val
+                );
+            }
+        }
+        return $parsed;
     }
 
     /**
      * Begin filter building using DB facade
      * 
-     * @param string $type  Group to filter by.
-     * @param string $value Value to filter on.
+     * @param array $filters Parsed DB filters.
      *
      * @return Objz
      */
-    protected function buildQuery($type, $value)
+    protected function buildQuery(array $filters)
     {
-        return DB::table($this->companyTable)
-            ->select(['id', 'business_sub_category', 'telephone', 'latitude', 'longitude', 'title', 'location'])
-            ->where($this->filterGroups[$type], '=', $value);
+        $query = DB::table($this->companyTable)
+            ->select(['id', 'business_sub_category', 'telephone', 'latitude', 'longitude', 'title', 'location']);
+        foreach ($filters as $key => $filter) {
+            $query->where($filter['name'], '=', $filter['val']);
+        }
+        return $query;
     }
 }

@@ -21,6 +21,7 @@
     "dependencies": {
         "@google/maps": "^0.4.5",
         "font-awesome": "^4.7.0",
+        "keyword-extractor": "0.0.14",
         "readmore-js": "^2.1.0",
         "vue-infinite-scroll": "^2.0.2",
         "vue-read-more": "^1.1.0",
