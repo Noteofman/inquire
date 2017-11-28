@@ -35,7 +35,7 @@
 					<h3 class="text-center">
 					</h3>
 					<p>
-						Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.
+						<h4>Accurate locally sourced company data.</h4>
 					</p>
 				</div>
 				<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -45,7 +45,7 @@
 					<h3 class="text-center">
 					</h3>
 					<p>
-						Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.
+						<h4>Simple, easy, to the point.</h4>
 					</p>
 				</div>
 				<div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -55,7 +55,7 @@
 					<h3 class="text-center">
 					</h3>
 					<p>
-						Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.
+						<h4>Find what you need, quickly.</h4>
 					</p>
 				</div>
 			</div>

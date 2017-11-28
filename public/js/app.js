@@ -6885,6 +6885,11 @@ exports.default = function (input) {
     component: __WEBPACK_IMPORTED_MODULE_3__components_browse_CompanyList___default.a,
     props: true
   }, {
+    path: '/search',
+    name: 'search',
+    component: __WEBPACK_IMPORTED_MODULE_3__components_browse_CompanyList___default.a,
+    props: false
+  }, {
     path: '/company/:id',
     name: 'company',
     component: __WEBPACK_IMPORTED_MODULE_4__components_company_Company___default.a,
@@ -56375,11 +56380,10 @@ var staticRenderFns = [
             _vm._v(" "),
             _c("h3", { staticClass: "text-center" }),
             _vm._v(" "),
-            _c("p", [
-              _vm._v(
-                "\n\t\t\t\t\t\tVivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.\n\t\t\t\t\t"
-              )
-            ])
+            _c("p"),
+            _c("h4", [_vm._v("Accurate locally sourced company data.")]),
+            _vm._v(" "),
+            _c("p")
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-xs-12 col-sm-4 col-md-4 col-lg-4" }, [
@@ -56389,11 +56393,10 @@ var staticRenderFns = [
             _vm._v(" "),
             _c("h3", { staticClass: "text-center" }),
             _vm._v(" "),
-            _c("p", [
-              _vm._v(
-                "\n\t\t\t\t\t\tVivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.\n\t\t\t\t\t"
-              )
-            ])
+            _c("p"),
+            _c("h4", [_vm._v("Simple, easy, to the point.")]),
+            _vm._v(" "),
+            _c("p")
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "col-xs-12 col-sm-4 col-md-4 col-lg-4" }, [
@@ -56403,11 +56406,10 @@ var staticRenderFns = [
             _vm._v(" "),
             _c("h3", { staticClass: "text-center" }),
             _vm._v(" "),
-            _c("p", [
-              _vm._v(
-                "\n\t\t\t\t\t\tVivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.\n\t\t\t\t\t"
-              )
-            ])
+            _c("p"),
+            _c("h4", [_vm._v("Find what you need, quickly.")]),
+            _vm._v(" "),
+            _c("p")
           ])
         ])
       ])
@@ -57135,72 +57137,75 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['id'],
+  props: ['id'],
 
-    data: function data() {
-        return {
-            listItems: null,
-            subcategories: null,
-            category: this.$route.query.category,
-            busy: false,
-            selected_distance: null,
-            selected_subcat: null
-        };
+  data: function data() {
+    return {
+      listItems: null,
+      subcategories: null,
+      category: this.$route.query.category,
+      term: this.$route.query.term,
+      busy: false,
+      selected_distance: null,
+      selected_subcat: null
+    };
+  },
+
+
+  methods: {
+    onCompanyClick: function onCompanyClick(event) {
+      var el = $(event.target);
+      var id = el.attr('data-id');
+      __WEBPACK_IMPORTED_MODULE_0__routes__["a" /* default */].push('/company/' + id);
     },
-
-
-    methods: {
-        onCompanyClick: function onCompanyClick(event) {
-            var el = $(event.target);
-            var id = el.attr('data-id');
-            __WEBPACK_IMPORTED_MODULE_0__routes__["a" /* default */].push('/company/' + id);
-        },
-        loadMore: function loadMore() {},
-        buildFilter: function buildFilter(callback) {
-            var params = {
-                category_id: this.id
-            };
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(function (location) {
-                    params.longitude = location.coords.longitude;
-                    params.latitude = location.coords.latitude;
-                    callback(params);
-                });
-            } else {
-                callback(params);
-            }
-        },
-        onFilter: function onFilter() {
-            var _this = this;
-
-            this.buildFilter(function (params) {
-                params.subcat = _this.selected_subcat, params.distance = _this.selected_distance, axios.get('/api/companies/filter', {
-                    params: params
-                }).then(function (response) {
-                    _this.listItems = response.data;
-                });
-            });
-        }
+    loadMore: function loadMore() {},
+    setup: function setup(callback) {
+      var params = {
+        category_id: this.id,
+        term: this.term
+      };
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (location) {
+          params.longitude = location.coords.longitude;
+          params.latitude = location.coords.latitude;
+          callback(params);
+        }, function (error) {
+          callback(params);
+        });
+      } else {
+        callback(params);
+      }
     },
+    onFilter: function onFilter() {
+      var _this = this;
 
-    created: function created() {
-        var _this2 = this;
-
-        this.buildFilter(function (params) {
-            axios.get('/api/companies/filter', {
-                params: params
-            }).then(function (response) {
-                _this2.listItems = response.data;
-            }).catch(function (error) {
-                _this2.loading = false;
-                console.log(error);
-            });
+      this.setup(function (params) {
+        params.subcat = _this.selected_subcat, params.distance = _this.selected_distance, axios.get('/api/companies/filter', {
+          params: params
+        }).then(function (response) {
+          _this.listItems = response.data;
         });
-
-        axios.get('/api/companies/categories/' + this.id).then(function (response) {
-            _this2.subcategories = response.data;
-        });
+      });
     }
+  },
+
+  created: function created() {
+    var _this2 = this;
+
+    this.setup(function (params) {
+      axios.get('/api/companies/filter', {
+        params: params
+      }).then(function (response) {
+        _this2.listItems = response.data;
+      }).catch(function (error) {
+        _this2.loading = false;
+        console.log(error);
+      });
+    });
+    axios.get('/api/companies/categories/' + this.id).then(function (response) {
+      _this2.subcategories = response.data;
+    });
+  }
 });
 
 /***/ }),
@@ -67680,6 +67685,7 @@ exports.push([module.i, "\n@media screen and (min-width: 1000px) {\n#search-cont
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__routes__ = __webpack_require__(88);
 //
 //
 //
@@ -67706,10 +67712,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-	name: 'app-nav'
+	name: 'app-nav',
+
+	data: function data() {
+		return {
+			searchTerm: null
+		};
+	},
+
+
+	methods: {
+		onSearch: function onSearch() {
+			if (!this.searchTerm) {
+				return;
+			}
+			__WEBPACK_IMPORTED_MODULE_0__routes__["a" /* default */].replace({ name: 'search', query: { term: this.searchTerm } });
+		}
+	}
 });
 
 /***/ }),
@@ -67756,7 +67780,60 @@ var render = function() {
           1
         ),
         _vm._v(" "),
-        _vm._m(1)
+        _c(
+          "div",
+          { staticClass: "collapse navbar-collapse navbar-ex1-collapse" },
+          [
+            _c(
+              "form",
+              {
+                staticClass: "navbar-form navbar-left ng-pristine ng-valid",
+                attrs: { id: "search-container", role: "search" },
+                on: {
+                  submit: function($event) {
+                    $event.preventDefault()
+                    _vm.onSearch($event)
+                  }
+                }
+              },
+              [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.searchTerm,
+                        expression: "searchTerm"
+                      }
+                    ],
+                    staticClass: "form-control",
+                    attrs: {
+                      id: "search-text",
+                      placeholder: "Business name",
+                      type: "text"
+                    },
+                    domProps: { value: _vm.searchTerm },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.searchTerm = $event.target.value
+                      }
+                    }
+                  })
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  { staticClass: "btn btn-default", attrs: { type: "submit" } },
+                  [_vm._v("Search")]
+                )
+              ]
+            )
+          ]
+        )
       ])
     ]
   )
@@ -67783,42 +67860,6 @@ var staticRenderFns = [
         _c("span", { staticClass: "icon-bar" }),
         _vm._v(" "),
         _c("span", { staticClass: "icon-bar" })
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "collapse navbar-collapse navbar-ex1-collapse" },
-      [
-        _c(
-          "form",
-          {
-            staticClass: "navbar-form navbar-left ng-pristine ng-valid",
-            attrs: { id: "search-container", role: "search" }
-          },
-          [
-            _c("div", { staticClass: "form-group" }, [
-              _c("input", {
-                staticClass: "form-control",
-                attrs: {
-                  id: "search-text",
-                  placeholder: "Business name",
-                  type: "text"
-                }
-              })
-            ]),
-            _vm._v(" "),
-            _c(
-              "button",
-              { staticClass: "btn btn-default", attrs: { type: "submit" } },
-              [_vm._v("Search")]
-            )
-          ]
-        )
       ]
     )
   }

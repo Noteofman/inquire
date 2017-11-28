@@ -13,9 +13,9 @@
 		</div>
 		
 		<div class="collapse navbar-collapse navbar-ex1-collapse">
-			<form id='search-container' class="navbar-form navbar-left ng-pristine ng-valid" role="search">
+			<form v-on:submit.prevent="onSearch" id='search-container' class="navbar-form navbar-left ng-pristine ng-valid" role="search">
 				<div class="form-group">
-					<input id='search-text' placeholder='Business name' type="text" class="form-control">
+					<input v-model='searchTerm' id='search-text' placeholder='Business name' type="text" class="form-control">
 				</div> <button type="submit" class="btn btn-default">Search</button>
 			</form>
 		</div>
@@ -26,8 +26,25 @@
 
 <script>
 
+import router from '../../routes';
+
 export default {
-	name: 'app-nav'
+	name: 'app-nav',
+
+	data() {
+		return {
+			searchTerm: null
+		}
+	},
+
+	methods: {
+		onSearch() {
+			if (!this.searchTerm) {
+				return;
+			}
+			router.replace({name: 'search', query:{ term: this.searchTerm}});
+		}
+	}
 }
 
 </script>

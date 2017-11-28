@@ -31,11 +31,13 @@ class Filter
     protected $filterGroups = array(
         'category_id' => array(
             'id' => 'company_category_id',
-            'group' => 'db'
+            'group' => 'db',
+            'queryType' => '='
         ),
         'subcat' => array(
             'id' => 'business_sub_category',
-            'group' => 'db'
+            'group' => 'db',
+            'queryType' => '='
         ),
         'longitude' => array(
             'id' => 'longitude',
@@ -48,6 +50,11 @@ class Filter
         'distance' => array(
             'id' => 'latitude',
             'group' => 'geo'
+        ),
+        'term' => array(
+            'id' => 'title',
+            'group' => 'db',
+            'queryType' => 'like'
         )
     );
 
@@ -121,8 +128,8 @@ class Filter
     protected function parseFilters(array $filters)
     {
         $parsed = array(
-            'db' => null,
-            'geo' => null
+            'db' => array(),
+            'geo' => array()
         );
         if (!$filters) {
             return true;
@@ -138,7 +145,8 @@ class Filter
             if ($this->filterGroups[$key]['group']) {
                 $parsed[$group][] = array(
                     'name' => $this->filterGroups[$key]['id'],
-                    'val' => $val
+                    'val' => $val,
+                    'queryType' => isset($this->filterGroups[$key]['queryType']) ? $this->filterGroups[$key]['queryType'] : null
                 );
             }
         }
@@ -157,7 +165,8 @@ class Filter
         $query = DB::table($this->companyTable)
             ->select(['id', 'business_sub_category', 'telephone', 'latitude', 'longitude', 'title', 'location']);
         foreach ($filters as $key => $filter) {
-            $query->where($filter['name'], '=', $filter['val']);
+            $method = $filter['queryType'];
+            $query->where($filter['name'], $method, $filter['val']);
         }
         return $query;
     }

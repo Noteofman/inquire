@@ -63,60 +63,50 @@ export default {
     props: ['id'],
 
     data() {
-        return {
-            listItems: null,
-            subcategories: null,
-            category: this.$route.query.category,
-            busy: false,
-            selected_distance: null,
-            selected_subcat: null
-        }
+      return {
+        listItems: null,
+        subcategories: null,
+        category: this.$route.query.category,
+        term: this.$route.query.term,
+        busy: false,
+        selected_distance: null,
+        selected_subcat: null
+      }
     },
 
     methods: {
         onCompanyClick(event) {
-            var el = $(event.target);
-            var id = el.attr('data-id');
-            router.push('/company/' + id);
+          var el = $(event.target);
+          var id = el.attr('data-id');
+          router.push('/company/' + id);
         },
 
         loadMore() {
         },
 
-        buildFilter(callback)
+        setup(callback)
         {
-            var params =  {
-                category_id: this.id
-            };
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(location => {
-                    params.longitude = location.coords.longitude;
-                    params.latitude = location.coords.latitude;
-                    callback(params);
-                });
-            } else {
+          var params =  {
+              category_id: this.id,
+              term: this.term
+          };
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(location => {
+                  params.longitude = location.coords.longitude;
+                  params.latitude = location.coords.latitude;
+                  callback(params);
+              }, (error) => {
                 callback(params);
-            }
+              });
+          } else {
+              callback(params);
+          }
         },
 
         onFilter() {
-            this.buildFilter((params) => {
-              params.subcat = this.selected_subcat,
-              params.distance = this.selected_distance,
-              axios.get('/api/companies/filter',
-              {
-                params: params
-              }
-              )
-              .then(response => {
-                this.listItems = response.data;
-              })
-            });
-        }
-    },
-
-    created() {
-        this.buildFilter( params => {
+          this.setup((params) => {
+            params.subcat = this.selected_subcat,
+            params.distance = this.selected_distance,
             axios.get('/api/companies/filter',
             {
               params: params
@@ -125,17 +115,29 @@ export default {
             .then(response => {
               this.listItems = response.data;
             })
-            .catch(error => {
-              this.loading =false;
-              console.log(error);
-            });
-        });
+          });
+        },
+    },
 
-    axios.get('/api/companies/categories/' + this.id)
+    created() {
+      this.setup( params => {
+        axios.get('/api/companies/filter',
+        {
+          params: params
+        })
+        .then(response => {
+          this.listItems = response.data;
+        })
+        .catch(error => {
+          this.loading =false;
+          console.log(error);
+        });
+      });
+      axios.get('/api/companies/categories/' + this.id)
         .then(response => {
             this.subcategories = response.data;
         })
-    }
+    },
 }
 
 </script>

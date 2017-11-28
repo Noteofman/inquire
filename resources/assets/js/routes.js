@@ -23,6 +23,12 @@ export default new VueRouter({
       props: true
     },
     {
+      path: '/search',
+      name: 'search',
+      component: CompanyList,
+      props: false
+    },
+    {
       path: '/company/:id',
       name: 'company',
       component: Company,
